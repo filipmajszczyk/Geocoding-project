@@ -1,0 +1,250 @@
+﻿<Window x:Class="projekt.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:properties="clr-namespace:projekt.Properties"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:projekt"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1280" ResizeMode="NoResize" Loaded="Window_Loaded">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Height" Value="50"/>
+            <Setter Property="Background" Value="{Binding Source={x:Static properties:Settings.Default}, Path=userBtnColor}"/>
+            <Setter Property="BorderThickness" Value="5"/>
+            <Setter Property="FontFamily" Value="{Binding Source={x:Static properties:Settings.Default}, Path=userFont}" />
+            <Setter Property="FontSize" Value="{Binding Source={x:Static properties:Settings.Default}, Path=userBtnFontSize}"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Foreground" Value="DodgerBlue"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="10" BorderBrush="{Binding Source={x:Static properties:Settings.Default}, Path=userBtnBorderColor}" BorderThickness="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{Binding Source={x:Static properties:Settings.Default}, Path=userActiveBtnColor}"/>
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontFamily" Value="{Binding Source={x:Static properties:Settings.Default}, Path=userFont}" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="Regular" />
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="3" />
+            <Setter Property="BorderBrush" Value="DodgerBlue" />
+            <Setter Property="Width" Value="356" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="Padding" Value="5" />
+            <Setter Property="FontFamily" Value="{Binding Source={x:Static properties:Settings.Default}, Path=userFont}" />
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="BorderThickness" Value="3" />
+            <Setter Property="BorderBrush" Value="DodgerBlue" />
+            <Setter Property="Width" Value="356" />
+            <Setter Property="Height" Value="50" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontFamily" Value="{Binding Source={x:Static properties:Settings.Default}, Path=userFont}" />
+            <Setter Property="Padding" Value="15,15,15,10" />
+            <Setter Property="Foreground" Value="DodgerBlue" />
+        </Style>
+        <SolidColorBrush x:Key="TransparentWhiteSmoke" Color="WhiteSmoke" Opacity="0.5" />
+        <CollectionViewSource x:Key="cityEntryViewSource" d:DesignSource="{d:DesignInstance {x:Type local:CityEntry}, CreateList=True}" />
+        <CollectionViewSource x:Key="cityEntitiesViewSource" d:DesignSource="{d:DesignInstance {x:Type local:CityEntities}, CreateList=True}" />
+        <CollectionViewSource x:Key="cityEntitiesCityEntriesViewSource" Source="{Binding CityEntries, Source={StaticResource cityEntitiesViewSource}}" />
+        <CollectionViewSource x:Key="cityViewSource" d:DesignSource="{d:DesignInstance {x:Type local:CityDataEntry}, CreateList=True}" />
+    </Window.Resources>
+    <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Resources/background.jpg" Stretch="UniformToFill">
+
+            </ImageBrush>
+        </Grid.Background>
+        <StackPanel Name="MenuBar" Grid.Column="3" Height="70" Margin="10,10,10,0" VerticalAlignment="Top">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="200" />
+                </Grid.ColumnDefinitions>
+                <Button Name="HomeButton" Content="Home" Grid.Column="0" Click="HomeButton_Click"/>
+                <Button Name="SettingsButton" Content="Settings" Grid.Column="1" Click="SettingsButton_Click" />
+                <Button Name="DiagramsButton" Content="Diagrams" Grid.Column="2" Click="DiagramsButton_Click" />
+            </Grid>
+        </StackPanel>
+        <Grid Name="Home" Visibility="Visible">
+            <StackPanel Name="Container" Height="675" Margin="10,85,10,0" VerticalAlignment="Top" Grid.Column="2" Orientation="Horizontal">
+                <StackPanel Grid.Column="1" Grid.Row="0" Margin="0" HorizontalAlignment="Left" Width="640" Height="675" >
+                    <Label Content="Information about places" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <DataGrid x:Name="citiesDataEntry" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="250" ItemsSource="{Binding Source={StaticResource cityEntryViewSource}}" Margin="10,5,0,10" VerticalAlignment="Center" Width="620" RowDetailsVisibilityMode="VisibleWhenSelected">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="idColumn" Binding="{Binding Id}" Header="Id" Width="30" />
+                            <DataGridTextColumn x:Name="cityColumn" Binding="{Binding CityName}" Header="City" Width="100" />
+                            <DataGridTextColumn x:Name="countryColumn" Binding="{Binding CountryName}" Header="Country" Width="100" />
+                            <DataGridTextColumn x:Name="latitudeColumn" Binding="{Binding Latitude}" Header="Latitude" Width="100" />
+                            <DataGridTextColumn x:Name="longitudeColumn" Binding="{Binding Longitude}" Header="Longitude" Width="100" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Label Content="Places waiting to save" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,-10"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="155"/>
+                            <ColumnDefinition Width="155"/>
+                            <ColumnDefinition Width="155"/>
+                            <ColumnDefinition Width="164"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="City" HorizontalAlignment="Stretch" FontSize="12" Padding="0" Margin="10,10,0,0" Background="White" Foreground="Black" Grid.Column="0"/>
+                        <Label Content="Country" HorizontalAlignment="Stretch" FontSize="12" Padding="0" Margin="0,10,0,0" Background="White" Foreground="Black" Grid.Column="1"/>
+                        <Label Content="Latitude" HorizontalAlignment="Stretch" FontSize="12" Padding="0" Margin="0,10,0,0" Background="White" Foreground="Black" Grid.Column="2"/>
+                        <Label Content="Longitude" HorizontalAlignment="Stretch" FontSize="12" Padding="0" Margin="0,10,0,0" Background="White" Foreground="Black" Grid.Column="3"/>
+                    </Grid>
+                    <ListBox ItemsSource="{Binding Path=Items}" Margin="0,-1,0,16" Height="250" Width="620">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel HorizontalAlignment="Stretch" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Path=CityName}" Width="155"/>
+                                    <TextBlock Text="{Binding Path=CountryName}" Width="155"/>
+                                    <TextBlock Text="{Binding Path=Latitude}" Width="155"/>
+                                    <TextBlock Text="{Binding Path=Longitude}" Width="130"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <StackPanel VerticalAlignment="Bottom" Margin="0">
+                        <Grid VerticalAlignment="Bottom">
+                            <Button x:Name="saveToDatabaseButton" Content="Save to database" Width="300" Click="SaveToDatabaseButton_Click"/>
+                        </Grid>
+                    </StackPanel>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Right" Margin="0" Width="640">
+                    <Label Content="Add new place" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                    <Grid DataContext="{StaticResource cityEntryViewSource}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Label Content="Country" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBox x:Name="inputCountry" Grid.Column="1" Grid.Row="0" />
+                        <Label Content="City" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox x:Name="inputCity" Grid.Column="1" Grid.Row="1" Margin="0,15,0,0" />
+                        <Label Content="Latitude" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox x:Name="inputLatitude" Grid.Column="1" Grid.Row="2" Margin="0,15,0,0" />
+                        <Label Content="Longitude" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <TextBox x:Name="inputLongitude" Grid.Column="1" Grid.Row="3" Margin="0,15,0,0" />
+                    </Grid>
+                    <Grid Margin="0,15,0,0">
+                        <StackPanel Grid.Column="0" Grid.Row="0">
+                            <Button x:Name="addPlaceButton" Content="Add place" Grid.Column="0" Margin="0,20,0,40" Click="AddPlaceButton_Click" Width="300"/>
+                            <Button x:Name="addLocalXMLFile" Content="Add local XML file" Grid.Column="0" Margin="0,0,0,10"  Width="300" Click="AddLocalXMLFile_Click"/>
+                        </StackPanel>
+                    </Grid>
+                    <Label Content="City from API" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Label Content="City" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <TextBox x:Name="inputCityApi" Grid.Column="1" />
+                    </Grid>
+                    <Grid Margin="0,39,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Button x:Name="loadFromApiButton" Content="Load from API" Grid.Column="0" Width="300" Click="loadFromApiButton_Click"/>
+                        <Button x:Name="autoGenerateButton" Content="Auto generate every 10s" Grid.Column="1" Width="300" Margin="0,0,30,0" Click="AutoGenerateButton_Click"/>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Name="Settings" Visibility="Hidden">
+            <StackPanel Name="ContainerSettings" Margin="-2,100,2,0">
+                <Grid Height="600" Width="1000">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70"/>
+                        <RowDefinition Height="70"/>
+                        <RowDefinition Height="70"/>
+                        <RowDefinition Height="70"/>
+                        <RowDefinition Height="70"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label Content="Font" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="260,10,0,0"/>
+                    <ComboBox x:Name="fontComboBox" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,100,0"/>
+                    <Label Content="Button font size" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="260,0,0,0"/>
+                    <ComboBox x:Name="btnFontSizeComboBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" Margin="0,0,100,0"/>
+                    <Label Content="Button color" Grid.Column="0" Grid.Row="2" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="260,0,0,0"/>
+                    <ComboBox x:Name="btnColorComboBox" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,100,0"/>
+                    <Label Content="Active button color" Grid.Column="0" Grid.Row="3" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="260,0,0,0"/>
+                    <ComboBox x:Name="activeBtnColorComboBox" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Center" Margin="0,0,100,0"/>
+                    <Label Content="Button border color" Grid.Column="0" Grid.Row="4" HorizontalAlignment="Center"  VerticalAlignment="Center" Margin="260,0,0,0"/>
+                    <ComboBox x:Name="btnBorderColorComboBox" Grid.Column="1" Grid.Row="4" HorizontalAlignment="Center" Margin="0,0,100,0"/>
+                    <Button Content="Default" Grid.Column="0" Grid.Row="5" Width="300" Margin="120,0,0,0" Click="Default_Button_Click"/>
+                    <Button Content="Save" Grid.Column="1" Grid.Row="5" Width="300" Margin="0,0,120,0" Click="Save_Button_Click"/>
+                </Grid>
+            </StackPanel>
+
+        </Grid>
+        <Grid Name="Diagrams" Visibility="Hidden">
+            <StackPanel Height="500" Name="Charts" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Background="{StaticResource TransparentWhiteSmoke}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="550"/>
+                        <ColumnDefinition Width="550"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Number of cities depending on latitude" Margin="20" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Top" />
+                    <lvc:PieChart Height="400" Margin="50, 75" Grid.Column="0" LegendLocation="Bottom" DataClick="Chart_OnDataClick" Hoverable="True" DataTooltip="{x:Null}">
+                        <lvc:PieChart.Series>
+                            <lvc:PieSeries Name="Lat9060" Title="-90 : -60" Values="31" DataLabels="True"
+                               LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Name="Lat6030" Title="-60 : -30" Values="14" DataLabels="True" 
+                               LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Name="Lat300" Title="-30 : 0" Values="90" DataLabels="True" 
+                               LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Name="Lat030" Title="0 : 30" Values="21" DataLabels="True" 
+                               LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Name="Lat3060" Title="30 : 60" Values="25" DataLabels="True" 
+                               LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Name="Lat6090" Title="60 : 90" Values="22" DataLabels="True" 
+                               LabelPoint="{Binding PointLabel}"/>
+                        </lvc:PieChart.Series>
+                    </lvc:PieChart>
+                    <Label Content="Number of cities in each country" Margin="20" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Top" />
+                    <lvc:CartesianChart Height="400" Margin="50, 25" Grid.Column="1" Series="{Binding SeriesCollection}" LegendLocation="Left">
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis Title="Country" Labels="{Binding Labels}"></lvc:Axis>
+                        </lvc:CartesianChart.AxisX>
+                        <lvc:CartesianChart.AxisY>
+                            <lvc:Axis Title="Number" LabelFormatter="{Binding Formatter}"></lvc:Axis>
+                        </lvc:CartesianChart.AxisY>
+                    </lvc:CartesianChart>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
